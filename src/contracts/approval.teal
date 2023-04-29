@@ -1,0 +1,715 @@
+#pragma version 8
+txn NumAppArgs
+int 0
+==
+bnz main_l20
+txna ApplicationArgs 0
+method "create_challenge(string,pay)void"
+==
+bnz main_l19
+txna ApplicationArgs 0
+method "show_seed()uint64"
+==
+bnz main_l18
+txna ApplicationArgs 0
+method "accept_challenge(pay)void"
+==
+bnz main_l17
+txna ApplicationArgs 0
+method "play_value(string)void"
+==
+bnz main_l16
+txna ApplicationArgs 0
+method "show_play()string"
+==
+bnz main_l15
+txna ApplicationArgs 0
+method "reveal(account,account)uint64"
+==
+bnz main_l14
+txna ApplicationArgs 0
+method "show_winner(account,account)uint64"
+==
+bnz main_l13
+txna ApplicationArgs 0
+method "getPlayer1()address"
+==
+bnz main_l12
+txna ApplicationArgs 0
+method "getPlayer2()address"
+==
+bnz main_l11
+err
+main_l11:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub getPlayer2caster_20
+int 1
+return
+main_l12:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub getPlayer1caster_19
+int 1
+return
+main_l13:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub showwinnercaster_18
+int 1
+return
+main_l14:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub revealcaster_17
+int 1
+return
+main_l15:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub showplaycaster_16
+int 1
+return
+main_l16:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub playvaluecaster_15
+int 1
+return
+main_l17:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub acceptchallengecaster_14
+int 1
+return
+main_l18:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub showseedcaster_13
+int 1
+return
+main_l19:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub createchallengecaster_12
+int 1
+return
+main_l20:
+txn OnCompletion
+int NoOp
+==
+bnz main_l24
+txn OnCompletion
+int OptIn
+==
+bnz main_l23
+err
+main_l23:
+txn ApplicationID
+int 0
+!=
+assert
+int 1
+return
+main_l24:
+txn ApplicationID
+int 0
+==
+assert
+int 1
+return
+
+// create_challenge
+createchallenge_0:
+proto 2 0
+frame_dig -1
+gtxns TypeEnum
+int pay
+==
+frame_dig -1
+gtxns Receiver
+global CurrentApplicationAddress
+==
+&&
+frame_dig -1
+gtxns CloseRemainderTo
+global ZeroAddress
+==
+&&
+frame_dig -1
+gtxns Sender
+global CurrentApplicationID
+app_opted_in
+&&
+assert
+byte "player1"
+frame_dig -1
+gtxns Sender
+app_global_put
+frame_dig -1
+gtxns Sender
+byte "player1"
+app_global_get
+==
+assert
+byte "wager"
+frame_dig -1
+gtxns Amount
+app_global_put
+byte "p1Rand"
+frame_dig -2
+extract 2 0
+app_global_put
+int 1
+return
+
+// show_seed
+showseed_1:
+proto 0 1
+int 0
+byte "p1Rand"
+app_global_get
+frame_bury 0
+retsub
+
+// accept_challenge
+acceptchallenge_2:
+proto 1 0
+frame_dig -1
+gtxns TypeEnum
+int pay
+==
+frame_dig -1
+gtxns Receiver
+global CurrentApplicationAddress
+==
+&&
+frame_dig -1
+gtxns CloseRemainderTo
+global ZeroAddress
+==
+&&
+byte "wager"
+app_global_get
+frame_dig -1
+gtxns Amount
+==
+&&
+frame_dig -1
+gtxns Sender
+global CurrentApplicationID
+app_opted_in
+&&
+assert
+byte "player2"
+frame_dig -1
+gtxns Sender
+app_global_put
+int 1
+return
+
+// play_value
+playvalue_3:
+proto 1 0
+txn Sender
+global CurrentApplicationID
+app_opted_in
+assert
+txn Sender
+byte "player1"
+app_global_get
+==
+bnz playvalue_3_l3
+txn Sender
+byte "player2"
+app_global_get
+==
+bz playvalue_3_l4
+txn Sender
+byte "l_p1"
+frame_dig -1
+extract 2 0
+app_local_put
+b playvalue_3_l4
+playvalue_3_l3:
+txn Sender
+byte "l_p1"
+frame_dig -1
+extract 2 0
+app_local_put
+playvalue_3_l4:
+int 1
+return
+
+// show_play
+showplay_4:
+proto 0 1
+byte ""
+byte "player1"
+app_global_get
+byte "l_p1"
+app_local_get
+base64_decode StdEncoding
+frame_bury 0
+frame_dig 0
+len
+itob
+extract 6 0
+frame_dig 0
+concat
+frame_bury 0
+retsub
+
+// winner
+winner_5:
+proto 2 1
+frame_dig -2
+base64_decode StdEncoding
+byte "p1Rand"
+app_global_get
+base64_decode StdEncoding
+==
+frame_dig -1
+base64_decode StdEncoding
+byte "p1Rand"
+app_global_get
+base64_decode StdEncoding
+==
+&&
+bnz winner_5_l6
+frame_dig -2
+base64_decode StdEncoding
+byte "p1Rand"
+app_global_get
+base64_decode StdEncoding
+==
+frame_dig -1
+base64_decode StdEncoding
+byte "p1Rand"
+app_global_get
+base64_decode StdEncoding
+!=
+&&
+bnz winner_5_l5
+frame_dig -2
+base64_decode StdEncoding
+byte "p1Rand"
+app_global_get
+base64_decode StdEncoding
+!=
+frame_dig -1
+base64_decode StdEncoding
+byte "p1Rand"
+app_global_get
+base64_decode StdEncoding
+==
+&&
+bnz winner_5_l4
+err
+winner_5_l4:
+int 2
+b winner_5_l7
+winner_5_l5:
+int 1
+b winner_5_l7
+winner_5_l6:
+int 3
+winner_5_l7:
+retsub
+
+// send_rewards
+sendrewards_6:
+proto 2 0
+itxn_begin
+int pay
+itxn_field TypeEnum
+frame_dig -2
+itxn_field Receiver
+frame_dig -1
+itxn_field Amount
+itxn_submit
+retsub
+
+// reveal
+reveal_7:
+proto 2 1
+int 0
+frame_dig -2
+txnas Accounts
+byte "l_p1"
+app_local_get
+frame_dig -1
+txnas Accounts
+byte "l_p1"
+app_local_get
+callsub winner_5
+int 3
+==
+bnz reveal_7_l6
+frame_dig -2
+txnas Accounts
+byte "l_p1"
+app_local_get
+frame_dig -1
+txnas Accounts
+byte "l_p1"
+app_local_get
+callsub winner_5
+int 2
+==
+bnz reveal_7_l5
+frame_dig -2
+txnas Accounts
+byte "l_p1"
+app_local_get
+frame_dig -1
+txnas Accounts
+byte "l_p1"
+app_local_get
+callsub winner_5
+int 1
+==
+bnz reveal_7_l4
+frame_dig -2
+txnas Accounts
+frame_dig -1
+txnas Accounts
+callsub resetall_11
+b reveal_7_l7
+reveal_7_l4:
+frame_dig -2
+txnas Accounts
+byte "wager"
+app_global_get
+int 2
+*
+byte "wager"
+app_global_get
+int 15
+*
+int 100
+/
+-
+callsub sendrewards_6
+frame_dig -2
+txnas Accounts
+frame_dig -1
+txnas Accounts
+callsub resetall_11
+b reveal_7_l7
+reveal_7_l5:
+frame_dig -1
+txnas Accounts
+byte "wager"
+app_global_get
+int 2
+*
+byte "wager"
+app_global_get
+int 15
+*
+int 100
+/
+-
+callsub sendrewards_6
+frame_dig -2
+txnas Accounts
+frame_dig -1
+txnas Accounts
+callsub resetall_11
+b reveal_7_l7
+reveal_7_l6:
+frame_dig -2
+txnas Accounts
+byte "wager"
+app_global_get
+byte "wager"
+app_global_get
+int 15
+*
+int 100
+/
+-
+callsub sendrewards_6
+frame_dig -1
+txnas Accounts
+byte "wager"
+app_global_get
+byte "wager"
+app_global_get
+int 15
+*
+int 100
+/
+-
+callsub sendrewards_6
+frame_dig -2
+txnas Accounts
+frame_dig -1
+txnas Accounts
+callsub resetall_11
+reveal_7_l7:
+int 1
+return
+
+// show_winner
+showwinner_8:
+proto 2 1
+int 0
+frame_dig -2
+txnas Accounts
+byte "l_p1"
+app_local_get
+frame_dig -1
+txnas Accounts
+byte "l_p1"
+app_local_get
+callsub winner_5
+frame_bury 0
+retsub
+
+// getPlayer1
+getPlayer1_9:
+proto 0 1
+byte ""
+byte "player1"
+app_global_get
+frame_bury 0
+frame_dig 0
+len
+int 32
+==
+assert
+retsub
+
+// getPlayer2
+getPlayer2_10:
+proto 0 1
+byte ""
+byte "player2"
+app_global_get
+frame_bury 0
+frame_dig 0
+len
+int 32
+==
+assert
+retsub
+
+// reset_all
+resetall_11:
+proto 2 0
+frame_dig -2
+byte "l_p1"
+byte ""
+app_local_put
+frame_dig -1
+byte "l_p1"
+byte ""
+app_local_put
+byte "p1Rand"
+int 0
+app_global_put
+byte "wager"
+int 0
+app_global_put
+retsub
+
+// create_challenge_caster
+createchallengecaster_12:
+proto 0 0
+byte ""
+int 0
+txna ApplicationArgs 1
+frame_bury 0
+txn GroupIndex
+int 1
+-
+frame_bury 1
+frame_dig 1
+gtxns TypeEnum
+int pay
+==
+assert
+frame_dig 0
+frame_dig 1
+callsub createchallenge_0
+retsub
+
+// show_seed_caster
+showseedcaster_13:
+proto 0 0
+int 0
+callsub showseed_1
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+itob
+concat
+log
+retsub
+
+// accept_challenge_caster
+acceptchallengecaster_14:
+proto 0 0
+int 0
+txn GroupIndex
+int 1
+-
+frame_bury 0
+frame_dig 0
+gtxns TypeEnum
+int pay
+==
+assert
+frame_dig 0
+callsub acceptchallenge_2
+retsub
+
+// play_value_caster
+playvaluecaster_15:
+proto 0 0
+byte ""
+txna ApplicationArgs 1
+frame_bury 0
+frame_dig 0
+callsub playvalue_3
+retsub
+
+// show_play_caster
+showplaycaster_16:
+proto 0 0
+byte ""
+callsub showplay_4
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+concat
+log
+retsub
+
+// reveal_caster
+revealcaster_17:
+proto 0 0
+int 0
+dupn 2
+txna ApplicationArgs 1
+int 0
+getbyte
+frame_bury 1
+txna ApplicationArgs 2
+int 0
+getbyte
+frame_bury 2
+frame_dig 1
+frame_dig 2
+callsub reveal_7
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+itob
+concat
+log
+retsub
+
+// show_winner_caster
+showwinnercaster_18:
+proto 0 0
+int 0
+dupn 2
+txna ApplicationArgs 1
+int 0
+getbyte
+frame_bury 1
+txna ApplicationArgs 2
+int 0
+getbyte
+frame_bury 2
+frame_dig 1
+frame_dig 2
+callsub showwinner_8
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+itob
+concat
+log
+retsub
+
+// getPlayer1_caster
+getPlayer1caster_19:
+proto 0 0
+byte ""
+callsub getPlayer1_9
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+concat
+log
+retsub
+
+// getPlayer2_caster
+getPlayer2caster_20:
+proto 0 0
+byte ""
+callsub getPlayer2_10
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+concat
+log
+retsub

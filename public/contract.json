@@ -1,0 +1,66 @@
+{
+  "name": "Guessing Game",
+  "methods": [
+    {
+      "name": "create_challenge",
+      "args": [
+        {
+          "type": "uint64",
+          "name": "rand"
+        },
+        {
+          "type": "pay",
+          "name": "payment"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "accept_challenge",
+      "args": [
+        {
+          "type": "uint64",
+          "name": "rand"
+        },
+        {
+          "type": "pay",
+          "name": "payment"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "play_value",
+      "args": [
+        {
+          "type": "uint64",
+          "name": "p"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "reveal",
+      "args": [
+        {
+          "type": "account",
+          "name": "account1"
+        },
+        {
+          "type": "account",
+          "name": "account2"
+        }
+      ],
+      "returns": {
+        "type": "string"
+      }
+    }
+  ],
+  "networks": {}
+}
