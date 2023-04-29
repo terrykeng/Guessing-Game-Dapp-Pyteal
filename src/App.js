@@ -8,7 +8,7 @@ import Challenge from "./components/guessing_game/challenge";
 import Playreveal from "./components/guessing_game/play";
 import Deploy from "./components/guessing_game/deploy";
 import {Notification} from "./components/utils/Notifications";
-import coverImg from "./src/assets/img/games-guess_the_number.png"
+import coverImg from "./assets/img/games-guess_the_number.png"
 import {indexerClient,connector} from "./utils/constants";
 import {Routes, Route} from 'react-router-dom';
 import {Appid} from "./utils/guessingame";
