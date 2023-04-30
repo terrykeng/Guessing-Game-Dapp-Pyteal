@@ -15,7 +15,6 @@ player2 = Bytes("player2")
 wager =  Bytes("wager")
 l_p = Bytes("l_p1")
 seed = Bytes("p1Rand")
-addresses = []
 
 
 @router.method
